@@ -1,0 +1,53 @@
+<a class="back-link" routerLink="/products">← До каталогу</a>
+<div class="page-heading">
+    <div><p class="eyebrow">ВАШ ПРОСТІР НА HAVEN</p>
+        <h1>{{ id ? 'Оновити оголошення' : 'Розкажіть про свій простір.' }}</h1>
+        <p class="muted">Додайте основні характеристики та опишіть переваги об’єкта.</p></div>
+</div>@if (loading()) {
+    <div class="state" role="status">Завантажуємо дані…</div>
+} @else if (loadFailed()) {
+    <div class="state error" role="alert"><p>{{ error() }}</p>
+        <button class="button" (click)="load()">Спробувати ще раз</button>
+    </div>
+} @else {
+    <form class="editor" [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <fieldset [disabled]="saving()">
+            <legend>Інформація про об’єкт</legend>
+            <div class="form-grid"><label class="full">Назва оголошення<input formControlName="name" maxlength="100"
+                                                                              placeholder="Наприклад, світла квартира біля парку"
+                                                                              [attr.aria-invalid]="invalid('name')"
+                                                                              aria-describedby="name-error">@if (invalid('name')) {
+                <small class="field-error" id="name-error">Вкажіть назву від 5 до 100 символів.</small>
+            }</label><label>Тип нерухомості<select formControlName="category">@for (c of categories; track c) {
+                <option [value]="c">{{ c }}</option>
+            }</select></label><label>Місто<input formControlName="city" maxlength="60" placeholder="Київ"
+                                                 [attr.aria-invalid]="invalid('city')"
+                                                 aria-describedby="city-error">@if (invalid('city')) {
+                <small class="field-error" id="city-error">Вкажіть місто від 2 до 60 символів.</small>
+            }</label><label>Ціна, $<input type="number" formControlName="price" min="1"
+                                          [attr.aria-invalid]="invalid('price')"
+                                          aria-describedby="price-error">@if (invalid('price')) {
+                <small class="field-error" id="price-error">Ціна має бути від 1 до 1 000 000 000 $.</small>
+            }</label><label>Площа, м²<input type="number" formControlName="area" min="1"
+                                            [attr.aria-invalid]="invalid('area')"
+                                            aria-describedby="area-error">@if (invalid('area')) {
+                <small class="field-error" id="area-error">Площа має бути від 1 до 100 000 м².</small>
+            }</label><label>Кімнат / приміщень<input type="number" formControlName="rooms" min="1" step="1"
+                                                     [attr.aria-invalid]="invalid('rooms')"
+                                                     aria-describedby="rooms-error">@if (invalid('rooms')) {
+                <small class="field-error" id="rooms-error">Вкажіть ціле число від 1 до 1000.</small>
+            }</label><label>Фотографія<select formControlName="image">@for (image of images; track image.value) {
+                <option [value]="image.value">{{ image.label }}</option>
+            }</select></label><label class="full">Опис<textarea formControlName="description" rows="5" maxlength="3000"
+                                                                placeholder="Планування, розташування, особливості…"
+                                                                [attr.aria-invalid]="invalid('description')"
+                                                                aria-describedby="description-error"></textarea>@if (invalid('description')) {
+                <small class="field-error" id="description-error">Опис має містити від 20 до 3000 символів.</small>
+            }</label></div>
+            <div class="form-actions">
+                <button class="button" type="submit">{{ saving() ? 'Зберігаємо…' : 'Зберегти оголошення ↗' }}</button>
+                <a class="text-button" routerLink="/products">Скасувати</a></div>
+        </fieldset>@if (error()) {
+        <p class="error" role="alert">{{ error() }}</p>
+    }</form>
+}

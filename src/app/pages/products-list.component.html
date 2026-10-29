@@ -1,0 +1,42 @@
+<section class="page-heading">
+    <div><p class="eyebrow">КАТАЛОГ HAVEN</p>
+        <h1>Знайдіть свій простір.</h1>
+        <p class="muted">Від затишної квартири до будинку з власним садом.</p></div>
+    <a class="button outline" routerLink="/products/new">Додати оголошення ↗</a></section>
+<div class="filters"><label>Пошук<input type="search" placeholder="Назва об’єкта" [value]="search()"
+                                        (input)="setSearch($any($event.target).value)"></label><label>Тип
+    нерухомості<select [value]="category()" (change)="setCategory($any($event.target).value)">
+        <option value="">Усі типи</option>@for (c of categories; track c) {
+        <option [value]="c">{{ c }}</option>
+    }</select></label><label>Місто<select [value]="city()" (change)="setCity($any($event.target).value)">
+    <option value="">Усі міста</option>@for (c of cities(); track c) {
+    <option [value]="c">{{ c }}</option>
+}</select></label>
+    <button class="button outline" (click)="reset()">Скинути</button>
+</div>
+@if (loading()) {
+    <div class="state" role="status">Завантажуємо оголошення…</div>
+} @else if (error()) {
+    <div class="state error" role="alert"><h2>Не вдалося завантажити каталог</h2>
+        <p>{{ error() }}</p>
+        <button class="button" (click)="load()">Спробувати ще раз</button>
+    </div>
+} @else {
+    <div class="results-line" aria-live="polite">
+        <span>Знайдено: {{ filtered().length }}</span><span>Сторінка {{ page() }} із {{ pageCount() }}</span></div>
+    <div class="property-grid">@for (product of visible(); track product.id) {
+        <app-property-card [product]="product"/>
+    } @empty {
+        <div class="state empty"><h2>Поки що нічого не знайшли.</h2>
+            <p>Спробуйте інше місто, назву або тип нерухомості.</p>
+            <button class="button outline" (click)="reset()">Скинути фільтри</button>
+        </div>
+    }</div>@if (pageCount() > 1) {
+        <nav class="pagination" aria-label="Сторінки каталогу">
+            <button class="button outline" [disabled]="page()===1" (click)="page.set(page()-1)">← Назад</button>
+            <span aria-live="polite">{{ page() }} / {{ pageCount() }}</span>
+            <button class="button outline" [disabled]="page()===pageCount()" (click)="page.set(page()+1)">Далі →
+            </button>
+        </nav>
+    }
+}

@@ -1,0 +1,45 @@
+<a class="back-link" routerLink="/products">← До каталогу</a>@if (loading()) {
+    <div class="state" role="status">Завантажуємо об’єкт…</div>
+} @else if (error()) {
+    <div class="state error" role="alert"><h1>Об’єкт недоступний</h1>
+        <p>{{ error() }}</p>
+        <button class="button" (click)="load()">Спробувати ще раз</button>
+    </div>
+} @else if (product(); as p) {
+    <section class="detail-heading">
+        <div><p class="eyebrow">{{ p.category }} / {{ p.city }}</p>
+            <h1>{{ p.name }}</h1></div>
+        <strong class="detail-price">{{ p.price | number:'1.0-0' }} $</strong></section><img class="detail-photo"
+                                                                                             [src]="p.image"
+                                                                                             [alt]="p.name" width="1200"
+                                                                                             height="700">
+    <div class="detail-layout">
+        <section>
+            <div class="facts">
+                <div><span>Площа</span><strong>{{ p.area }} м²</strong></div>
+                <div><span>Кімнат / приміщень</span><strong>{{ p.rooms }}</strong></div>
+                <div><span>Місто</span><strong>{{ p.city }}</strong></div>
+            </div>
+            <h2>Про цей простір</h2>
+            <p class="description">{{ p.description }}</p></section>
+        <aside class="management"><p class="eyebrow">КЕРУВАННЯ ОГОЛОШЕННЯМ</p>
+            <h2>Деталі мають значення.</h2>
+            <p>Оновіть інформацію або видаліть оголошення, коли воно втратить актуальність.</p><a class="button"
+                                                                                                  [routerLink]="['/products',p.id,'edit']">Редагувати
+                ↗</a>@if (!confirming()) {
+                <button class="text-button danger" (click)="confirming.set(true)">Видалити оголошення</button>
+            } @else {
+                <div class="confirm" role="group" aria-label="Підтвердження видалення"><p>Видалити «{{ p.name }}»? Цю
+                    дію не можна скасувати.</p>
+                    <button class="button danger-button" [disabled]="deleting()"
+                            (click)="remove()">{{ deleting() ? 'Видаляємо…' : 'Так, видалити' }}
+                    </button>
+                    <button class="text-button" [disabled]="deleting()" (click)="confirming.set(false)">Скасувати
+                    </button>
+                </div>
+            }
+            @if (deleteError()) {
+                <p class="error" role="alert">{{ deleteError() }}</p>
+            }</aside>
+    </div>
+}
